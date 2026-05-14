@@ -6,6 +6,7 @@ import android.graphics.Typeface
 import android.os.*
 import android.util.TypedValue
 import android.view.Gravity
+import android.view.animation.DecelerateInterpolator
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.tabs.TabLayout
@@ -23,6 +24,7 @@ class LineupActivity : AppCompatActivity() {
         tabLayout = findViewById(R.id.tabLayout)
         content = findViewById(R.id.content)
         scrollView = findViewById(R.id.scrollView)
+        FavoriteReminders.createNotificationChannel(this)
 
         listOf("Rage", "Kodama", "Tortuga").forEach { tabLayout.addTab(tabLayout.newTab().setText(it)) }
         showStage("Rage")
@@ -35,14 +37,6 @@ class LineupActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.btnJumpNow).setOnClickListener { jumpToNow() }
         findViewById<Button>(R.id.btnBack).setOnClickListener { finish() }
-        createNotificationChannel()
-    }
-
-    private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val ch = NotificationChannel("festival_reminders", "Festival Reminders", NotificationManager.IMPORTANCE_HIGH)
-            (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannel(ch)
-        }
     }
 
     private var nowView: android.view.View? = null
@@ -66,6 +60,7 @@ class LineupActivity : AppCompatActivity() {
         }
 
         var lastDay = -1
+        var actIndex = 0
         for (act in acts) {
             if (act.day != lastDay) {
                 lastDay = act.day
@@ -83,6 +78,7 @@ class LineupActivity : AppCompatActivity() {
             }
 
             val isCurrent = act == currentAct
+            val targetAlpha = if (isCurrent) 1f else 0.7f
             val card = LinearLayout(this).apply {
                 orientation = LinearLayout.VERTICAL
                 setBackgroundResource(cardBg)
@@ -90,7 +86,8 @@ class LineupActivity : AppCompatActivity() {
                 val lp = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
                 lp.bottomMargin = dp(8)
                 layoutParams = lp
-                alpha = if (isCurrent) 1f else 0.7f
+                alpha = 0f
+                translationY = dp(10).toFloat()
             }
 
             val fav = if (Favorites.isFav(act.name)) "\u2B50 " else ""
@@ -119,6 +116,7 @@ class LineupActivity : AppCompatActivity() {
             card.addView(titleTv)
             card.addView(timeTv)
             card.addView(descTv)
+            card.addView(createArtistSearchRow(this, act.name))
 
             if (isCurrent) {
                 val nowLabel = TextView(this).apply {
@@ -134,6 +132,14 @@ class LineupActivity : AppCompatActivity() {
 
             card.setOnClickListener { toggleFavWithReminder(act, stage) }
             content.addView(card)
+            card.animate()
+                .alpha(targetAlpha)
+                .translationY(0f)
+                .setStartDelay((actIndex * 18).coerceAtMost(180).toLong())
+                .setDuration(220)
+                .setInterpolator(DecelerateInterpolator())
+                .start()
+            actIndex++
             if (isCurrent) nowView = card
         }
     }
@@ -145,46 +151,13 @@ class LineupActivity : AppCompatActivity() {
     }
 
     private fun toggleFavWithReminder(act: Act, stage: String) {
-        Favorites.toggle(act.name)
-        if (Favorites.isFav(act.name)) {
-            scheduleReminder(act)
-            Toast.makeText(this, "\u2B50 ${act.name} \u2014 reminder set", Toast.LENGTH_SHORT).show()
+        val result = FavoriteReminders.toggle(this, act)
+        if (result.isFavorite) {
+            val msg = if (result.reminderScheduled) "\u2B50 ${act.name} \u2014 start alert set" else "\u2B50 ${act.name} saved"
+            Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
         } else {
-            cancelReminder(act)
             Toast.makeText(this, "Removed ${act.name}", Toast.LENGTH_SHORT).show()
         }
         showStage(stage)
-    }
-
-    private fun scheduleReminder(act: Act) {
-        try {
-            val cal = Calendar.getInstance().apply {
-                set(Calendar.MONTH, Calendar.MAY)
-                set(Calendar.YEAR, 2026)
-                set(Calendar.DAY_OF_MONTH, act.day)
-                set(Calendar.HOUR_OF_DAY, act.hour)
-                set(Calendar.MINUTE, act.minute)
-                set(Calendar.SECOND, 0)
-                add(Calendar.MINUTE, -15)
-            }
-            if (cal.timeInMillis < System.currentTimeMillis()) return
-            val intent = Intent(this, ReminderReceiver::class.java).apply {
-                putExtra("act_name", act.name)
-                putExtra("act_stage", act.stage)
-            }
-            val pi = PendingIntent.getBroadcast(this, act.name.hashCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-            val am = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !am.canScheduleExactAlarms()) {
-                am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, cal.timeInMillis, pi)
-            } else {
-                am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, cal.timeInMillis, pi)
-            }
-        } catch (_: Exception) {}
-    }
-
-    private fun cancelReminder(act: Act) {
-        val intent = Intent(this, ReminderReceiver::class.java)
-        val pi = PendingIntent.getBroadcast(this, act.name.hashCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-        (getSystemService(Context.ALARM_SERVICE) as AlarmManager).cancel(pi)
     }
 }
