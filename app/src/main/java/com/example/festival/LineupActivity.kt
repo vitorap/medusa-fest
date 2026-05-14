@@ -70,7 +70,7 @@ class LineupActivity : AppCompatActivity() {
                     setTextColor(0xFF9e9e9e.toInt())
                     textSize = 13f
                     setTypeface(null, Typeface.BOLD)
-                    letterSpacing = 0.2f
+                    letterSpacing = 0f
                     gravity = Gravity.CENTER
                     setPadding(0, dp(20), 0, dp(8))
                 }
@@ -95,14 +95,17 @@ class LineupActivity : AppCompatActivity() {
             val titleTv = TextView(this).apply {
                 text = "$fav${act.name}"
                 setTextColor(color)
-                textSize = if (isCurrent) 16f else 14f
-                setTypeface(null, if (isCurrent) Typeface.BOLD else Typeface.NORMAL)
+                textSize = if (isCurrent) 15.5f else 14f
+                typeface = Typeface.create("sans-serif-medium", if (isCurrent) Typeface.BOLD else Typeface.NORMAL)
+                includeFontPadding = false
             }
 
             val timeTv = TextView(this).apply {
                 text = formatTime(act)
                 setTextColor(dimColor)
-                textSize = 12f
+                textSize = 11.5f
+                typeface = Typeface.create("sans-serif-condensed", Typeface.NORMAL)
+                includeFontPadding = false
                 setPadding(0, dp(2), 0, 0)
             }
 
@@ -110,25 +113,37 @@ class LineupActivity : AppCompatActivity() {
                 text = act.description
                 setTextColor(0xFF9e9e9e.toInt())
                 textSize = 12f
+                typeface = Typeface.create("sans-serif", Typeface.NORMAL)
                 setPadding(0, dp(4), 0, 0)
             }
 
             card.addView(titleTv)
             card.addView(timeTv)
             card.addView(descTv)
-            card.addView(createArtistSearchRow(this, act.name))
 
+            val bottomRow = LinearLayout(this).apply {
+                orientation = LinearLayout.HORIZONTAL
+                gravity = Gravity.CENTER_VERTICAL
+                setPadding(0, dp(8), 0, 0)
+            }
             if (isCurrent) {
                 val nowLabel = TextView(this).apply {
                     text = "\u25B6 NOW PLAYING"
                     setTextColor(0xFFbb86fc.toInt())
                     textSize = 10f
-                    letterSpacing = 0.15f
-                    setTypeface(null, Typeface.BOLD)
-                    setPadding(0, dp(6), 0, 0)
+                    letterSpacing = 0f
+                    typeface = Typeface.create("sans-serif-medium", Typeface.BOLD)
+                    includeFontPadding = false
+                    layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
                 }
-                card.addView(nowLabel)
+                bottomRow.addView(nowLabel)
+            } else {
+                bottomRow.addView(Space(this).apply {
+                    layoutParams = LinearLayout.LayoutParams(0, 1, 1f)
+                })
             }
+            bottomRow.addView(createArtistSearchRow(this, act.name, topMarginDp = 0))
+            card.addView(bottomRow)
 
             card.setOnClickListener { toggleFavWithReminder(act, stage) }
             content.addView(card)

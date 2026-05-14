@@ -228,13 +228,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getNowPlaying(stage: String, nowMin: Int, current: Act?): String {
-        if (current == null) return "$stage Stage\nNo act playing yet"
+        if (current == null) return "$stage\nNo act playing yet"
         val next = getNextAct(current)
         val endMin = if (next != null) actMinutes(next) else actMinutes(current) + 120
         val remaining = endMin - nowMin
-        val countdown = if (remaining > 0) "${remaining}min left" else "ending"
+        val countdown = if (remaining > 0) "${remaining}m left" else "ending"
         val fav = if (Favorites.isFav(current.name)) " \u2B50" else ""
-        val nextInfo = if (next != null) "\nNext: ${next.name} at %02d:%02d".format(next.hour, next.minute) else ""
-        return "$stage Stage\n${current.name}$fav\n${formatTime(current)} - $countdown\n${current.description}$nextInfo"
+        return "$stage\n${current.name}$fav\n${formatTime(current)} - $countdown\n${current.description}"
     }
 }

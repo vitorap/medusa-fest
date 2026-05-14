@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="#E60d0d1a"
+    android:background="#E6000000"
     android:padding="12dp">
     <TextView
         android:layout_width="match_parent"
@@ -13,7 +13,8 @@
         android:textColor="#bb86fc"
         android:textSize="10sp"
         android:textStyle="bold"
-        android:letterSpacing="0.2"
+        android:letterSpacing="0"
+        android:fontFamily="sans-serif-medium"
         android:layout_marginBottom="6dp"/>
     <TextView android:id="@+id/wRage"
         android:layout_width="match_parent"
