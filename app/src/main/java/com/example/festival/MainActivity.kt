@@ -3,6 +3,7 @@ package com.example.festival
 import android.app.*
 import android.content.*
 import android.os.*
+import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -123,6 +124,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var linksRage: LinearLayout
     private lateinit var linksKodama: LinearLayout
     private lateinit var linksTortuga: LinearLayout
+    private lateinit var favRage: TextView
+    private lateinit var favKodama: TextView
+    private lateinit var favTortuga: TextView
     private val handler = Handler(Looper.getMainLooper())
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -135,8 +139,16 @@ class MainActivity : AppCompatActivity() {
         linksRage = findViewById(R.id.linksRage)
         linksKodama = findViewById(R.id.linksKodama)
         linksTortuga = findViewById(R.id.linksTortuga)
+        favRage = findViewById(R.id.favRage)
+        favKodama = findViewById(R.id.favKodama)
+        favTortuga = findViewById(R.id.favTortuga)
+        FavoriteReminders.createNotificationChannel(this)
+        FavoriteReminders.requestNotificationPermission(this)
         findViewById<Button>(R.id.btnLineup).setOnClickListener {
             startActivity(Intent(this, LineupActivity::class.java))
+        }
+        findViewById<Button>(R.id.btnFavorites).setOnClickListener {
+            startActivity(Intent(this, FavoritesActivity::class.java))
         }
         showWelcome()
         updateDisplay()
@@ -159,8 +171,9 @@ class MainActivity : AppCompatActivity() {
             .setMessage(
                 "Here are some tips:\n\n" +
                 "\u2022 This screen shows what's playing NOW on each stage with a countdown timer.\n\n" +
-                "\u2022 Tap \"Full Lineup\" to see all acts. Tap any act to \u2B50 favorite it \u2014 you'll get a notification 15 minutes before it starts.\n\n" +
+                "\u2022 Tap \"Full Lineup\" to see all acts. Tap any act to \u2B50 favorite it \u2014 you'll get a notification when it starts.\n\n" +
                 "\u2022 Tap again to unfavorite and cancel the reminder.\n\n" +
+                "\u2022 Use Favorites to keep artists you liked and search them later.\n\n" +
                 "\u2022 Use \"Jump to Now\" in the lineup to scroll to the current act.\n\n" +
                 "\u2022 A home screen widget is available! Long-press your home screen \u2192 Widgets \u2192 Master Of Puppets.\n\n" +
                 "Enjoy the festival! \uD83D\uDD25\uD83D\uDC80"
@@ -172,16 +185,41 @@ class MainActivity : AppCompatActivity() {
     private fun updateDisplay() {
         val cal = Calendar.getInstance()
         val nowMin = cal.get(Calendar.DAY_OF_MONTH) * 24 * 60 + cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE)
-        updateStageCard("Rage", nowMin, tvRage, linksRage)
-        updateStageCard("Kodama", nowMin, tvKodama, linksKodama)
-        updateStageCard("Tortuga", nowMin, tvTortuga, linksTortuga)
+        updateStageCard("Rage", nowMin, tvRage, linksRage, favRage)
+        updateStageCard("Kodama", nowMin, tvKodama, linksKodama, favKodama)
+        updateStageCard("Tortuga", nowMin, tvTortuga, linksTortuga, favTortuga)
     }
 
-    private fun updateStageCard(stage: String, nowMin: Int, textView: TextView, links: LinearLayout) {
+    private fun updateStageCard(stage: String, nowMin: Int, textView: TextView, links: LinearLayout, favButton: TextView) {
         val current = getCurrentAct(stage, nowMin)
         textView.text = getNowPlaying(stage, nowMin, current)
+        updateFavoriteButton(favButton, current)
+        val artistName = current?.name
+        if (links.tag == artistName) return
         links.removeAllViews()
-        if (current != null) links.addView(createArtistSearchRow(this, current.name))
+        links.tag = artistName
+        if (artistName != null) links.addView(createArtistSearchRow(this, artistName))
+    }
+
+    private fun updateFavoriteButton(button: TextView, act: Act?) {
+        if (act == null) {
+            button.visibility = View.GONE
+            button.setOnClickListener(null)
+            return
+        }
+        button.visibility = View.VISIBLE
+        button.text = if (Favorites.isFav(act.name)) "\u2605" else "\u2606"
+        button.contentDescription = if (Favorites.isFav(act.name)) "Remove ${act.name} from favorites" else "Add ${act.name} to favorites"
+        button.setOnClickListener {
+            val result = FavoriteReminders.toggle(this, act)
+            val msg = if (result.isFavorite) {
+                if (result.reminderScheduled) "\u2B50 ${act.name} \u2014 start alert set" else "\u2B50 ${act.name} saved"
+            } else {
+                "Removed ${act.name}"
+            }
+            Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+            updateDisplay()
+        }
     }
 
     private fun getCurrentAct(stage: String, nowMin: Int): Act? {
@@ -190,13 +228,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getNowPlaying(stage: String, nowMin: Int, current: Act?): String {
-        if (current == null) return "\uD83C\uDFB5 $stage Stage\n\nNo act playing yet"
+        if (current == null) return "$stage Stage\nNo act playing yet"
         val next = getNextAct(current)
         val endMin = if (next != null) actMinutes(next) else actMinutes(current) + 120
         val remaining = endMin - nowMin
         val countdown = if (remaining > 0) "${remaining}min left" else "ending"
         val fav = if (Favorites.isFav(current.name)) " \u2B50" else ""
-        val nextInfo = if (next != null) "\n\n\u23ED Next: ${next.name} at %02d:%02d".format(next.hour, next.minute) else ""
-        return "\uD83C\uDFB5 $stage Stage\n\n${current.name}$fav  [${formatTime(current)}]\n\u23F1 $countdown\n\n${current.description}$nextInfo"
+        val nextInfo = if (next != null) "\nNext: ${next.name} at %02d:%02d".format(next.hour, next.minute) else ""
+        return "$stage Stage\n${current.name}$fav\n${formatTime(current)} - $countdown\n${current.description}$nextInfo"
     }
 }
