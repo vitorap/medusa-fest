@@ -93,15 +93,15 @@ private fun Context.createArtistSearchButton(
         setImageResource(target.iconRes)
         imageTintList = ColorStateList.valueOf(target.color)
         scaleType = ImageView.ScaleType.CENTER
-        setPadding(dp(6), dp(6), dp(6), dp(6))
+        setPadding(dp(5), dp(5), dp(5), dp(5))
         background = searchButtonBackground(target.color)
-        alpha = 0.82f
+        alpha = 0.64f
         isClickable = true
         isFocusable = true
         setOnClickListener { animateLaunch(this, this@createArtistSearchButton, target, artistName) }
 
-        val params = LinearLayout.LayoutParams(dp(28), dp(28))
-        if (index > 0) params.leftMargin = dp(5)
+        val params = LinearLayout.LayoutParams(dp(22), dp(22))
+        if (index > 0) params.leftMargin = dp(4)
         layoutParams = params
     }
 }
@@ -117,7 +117,7 @@ private fun animateLaunch(button: ImageButton, context: Context, target: ArtistS
             button.animate()
                 .scaleX(1f)
                 .scaleY(1f)
-                .alpha(0.82f)
+                .alpha(0.64f)
                 .setDuration(130)
                 .setInterpolator(OvershootInterpolator(2f))
                 .start()
@@ -140,13 +140,13 @@ private fun openArtistSearch(context: Context, target: ArtistSearchTarget, artis
 private fun Context.searchButtonBackground(color: Int): RippleDrawable {
     val chip = GradientDrawable().apply {
         shape = GradientDrawable.RECTANGLE
-        cornerRadius = dp(10).toFloat()
-        setColor(Color.argb(18, Color.red(color), Color.green(color), Color.blue(color)))
-        setStroke(dp(1), Color.argb(92, Color.red(color), Color.green(color), Color.blue(color)))
+        cornerRadius = dp(8).toFloat()
+        setColor(Color.argb(10, Color.red(color), Color.green(color), Color.blue(color)))
+        setStroke(dp(1), Color.argb(56, Color.red(color), Color.green(color), Color.blue(color)))
     }
     val mask = GradientDrawable().apply {
         shape = GradientDrawable.RECTANGLE
-        cornerRadius = dp(10).toFloat()
+        cornerRadius = dp(8).toFloat()
         setColor(Color.WHITE)
     }
     return RippleDrawable(

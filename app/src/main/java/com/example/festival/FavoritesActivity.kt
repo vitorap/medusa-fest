@@ -61,33 +61,38 @@ class FavoritesActivity : AppCompatActivity() {
             card.addView(TextView(this).apply {
                 text = "★ ${act.name}"
                 setTextColor(color)
-                textSize = 15f
-                setTypeface(null, Typeface.BOLD)
+                textSize = 14.5f
+                typeface = Typeface.create("sans-serif-medium", Typeface.BOLD)
+                includeFontPadding = false
             })
             card.addView(TextView(this).apply {
                 text = "${act.stage} - Day ${act.day} - ${formatTime(act)}"
                 setTextColor(dimColor)
-                textSize = 12f
+                textSize = 11.5f
+                typeface = Typeface.create("sans-serif-condensed", Typeface.NORMAL)
+                includeFontPadding = false
                 setPadding(0, dp(2), 0, 0)
             })
             card.addView(TextView(this).apply {
                 text = act.description
                 setTextColor(0xFF9e9e9e.toInt())
                 textSize = 12f
+                typeface = Typeface.create("sans-serif", Typeface.NORMAL)
                 setPadding(0, dp(4), 0, 0)
             })
 
             val actions = LinearLayout(this).apply {
                 orientation = LinearLayout.HORIZONTAL
                 gravity = Gravity.CENTER_VERTICAL
-                setPadding(0, dp(2), 0, 0)
+                setPadding(0, dp(8), 0, 0)
             }
             actions.addView(TextView(this).apply {
                 text = "Remove"
                 setTextColor(0xFFbb86fc.toInt())
-                textSize = 12f
-                setTypeface(null, Typeface.BOLD)
+                textSize = 11f
+                typeface = Typeface.create("sans-serif-medium", Typeface.BOLD)
                 setPadding(0, 0, dp(14), 0)
+                layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
                 setOnClickListener {
                     FavoriteReminders.toggle(this@FavoritesActivity, act)
                     Toast.makeText(this@FavoritesActivity, "Removed ${act.name}", Toast.LENGTH_SHORT).show()

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#0d0d1a">
+    android:background="#000000">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -28,7 +28,8 @@
             android:textColor="#bb86fc"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:letterSpacing="0.2"
+            android:letterSpacing="0"
+            android:fontFamily="sans-serif-medium"
             android:gravity="center"/>
     </LinearLayout>
 
