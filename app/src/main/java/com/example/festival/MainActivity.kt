@@ -120,6 +120,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvRage: TextView
     private lateinit var tvKodama: TextView
     private lateinit var tvTortuga: TextView
+    private lateinit var linksRage: LinearLayout
+    private lateinit var linksKodama: LinearLayout
+    private lateinit var linksTortuga: LinearLayout
     private val handler = Handler(Looper.getMainLooper())
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -129,6 +132,9 @@ class MainActivity : AppCompatActivity() {
         tvRage = findViewById(R.id.tvRage)
         tvKodama = findViewById(R.id.tvKodama)
         tvTortuga = findViewById(R.id.tvTortuga)
+        linksRage = findViewById(R.id.linksRage)
+        linksKodama = findViewById(R.id.linksKodama)
+        linksTortuga = findViewById(R.id.linksTortuga)
         findViewById<Button>(R.id.btnLineup).setOnClickListener {
             startActivity(Intent(this, LineupActivity::class.java))
         }
@@ -166,14 +172,24 @@ class MainActivity : AppCompatActivity() {
     private fun updateDisplay() {
         val cal = Calendar.getInstance()
         val nowMin = cal.get(Calendar.DAY_OF_MONTH) * 24 * 60 + cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE)
-        tvRage.text = getNowPlaying("Rage", nowMin)
-        tvKodama.text = getNowPlaying("Kodama", nowMin)
-        tvTortuga.text = getNowPlaying("Tortuga", nowMin)
+        updateStageCard("Rage", nowMin, tvRage, linksRage)
+        updateStageCard("Kodama", nowMin, tvKodama, linksKodama)
+        updateStageCard("Tortuga", nowMin, tvTortuga, linksTortuga)
     }
 
-    private fun getNowPlaying(stage: String, nowMin: Int): String {
+    private fun updateStageCard(stage: String, nowMin: Int, textView: TextView, links: LinearLayout) {
+        val current = getCurrentAct(stage, nowMin)
+        textView.text = getNowPlaying(stage, nowMin, current)
+        links.removeAllViews()
+        if (current != null) links.addView(createArtistSearchRow(this, current.name))
+    }
+
+    private fun getCurrentAct(stage: String, nowMin: Int): Act? {
         val stageActs = lineup.filter { it.stage == stage }
-        val current = stageActs.filter { actMinutes(it) <= nowMin }.maxByOrNull { actMinutes(it) }
+        return stageActs.filter { actMinutes(it) <= nowMin }.maxByOrNull { actMinutes(it) }
+    }
+
+    private fun getNowPlaying(stage: String, nowMin: Int, current: Act?): String {
         if (current == null) return "\uD83C\uDFB5 $stage Stage\n\nNo act playing yet"
         val next = getNextAct(current)
         val endMin = if (next != null) actMinutes(next) else actMinutes(current) + 120

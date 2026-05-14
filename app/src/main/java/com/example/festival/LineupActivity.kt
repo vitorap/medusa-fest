@@ -119,6 +119,7 @@ class LineupActivity : AppCompatActivity() {
             card.addView(titleTv)
             card.addView(timeTv)
             card.addView(descTv)
+            card.addView(createArtistSearchRow(this, act.name))
 
             if (isCurrent) {
                 val nowLabel = TextView(this).apply {

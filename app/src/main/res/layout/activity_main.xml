@@ -59,6 +59,11 @@
                     android:textColor="#ff6b6b"
                     android:textSize="15sp"
                     android:lineSpacingExtra="4dp"/>
+                <LinearLayout
+                    android:id="@+id/linksRage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"/>
             </LinearLayout>
 
             <LinearLayout
@@ -74,6 +79,11 @@
                     android:textColor="#69f0ae"
                     android:textSize="15sp"
                     android:lineSpacingExtra="4dp"/>
+                <LinearLayout
+                    android:id="@+id/linksKodama"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"/>
             </LinearLayout>
 
             <LinearLayout
@@ -89,6 +99,11 @@
                     android:textColor="#ffd740"
                     android:textSize="15sp"
                     android:lineSpacingExtra="4dp"/>
+                <LinearLayout
+                    android:id="@+id/linksTortuga"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"/>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
