@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Festival" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="android:windowBackground">#0d0d1a</item>
+        <item name="android:statusBarColor">#0d0d1a</item>
+        <item name="android:navigationBarColor">#0d0d1a</item>
+        <item name="colorPrimary">#bb86fc</item>
+        <item name="colorSurface">#16213e</item>
+    </style>
+</resources>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widgetRoot"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#E60d0d1a"
+    android:padding="12dp">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="MOP BRASIL"
+        android:textColor="#bb86fc"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        android:letterSpacing="0.2"
+        android:layout_marginBottom="6dp"/>
+    <TextView android:id="@+id/wRage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#ff6b6b"
+        android:textSize="11sp"
+        android:layout_marginBottom="4dp"/>
+    <TextView android:id="@+id/wKodama"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#69f0ae"
+        android:textSize="11sp"
+        android:layout_marginBottom="4dp"/>
+    <TextView android:id="@+id/wTortuga"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#ffd740"
+        android:textSize="11sp"/>
+</LinearLayout>

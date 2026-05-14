@@ -1,0 +1,25 @@
+R_DEF: Internal format may change without notice
+local
+drawable card_kodama
+drawable card_rage
+drawable card_tortuga
+drawable tab_bg
+id btnBack
+id btnJumpNow
+id btnLineup
+id content
+id scrollView
+id tabLayout
+id tvKodama
+id tvRage
+id tvTortuga
+id wKodama
+id wRage
+id wTortuga
+id widgetRoot
+layout activity_lineup
+layout activity_main
+layout widget_layout
+mipmap ic_launcher
+style Theme.Festival
+xml widget_info

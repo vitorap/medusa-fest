@@ -1,0 +1,94 @@
+[
+    {
+        "merged": "/home/emelgao/.gradle/daemon/8.2/com.example.festival.app-merged_res-31:/mipmap-hdpi_ic_launcher.png.flat",
+        "source": "/home/emelgao/.gradle/daemon/8.2/com.example.festival.app-main-33:/mipmap-hdpi/ic_launcher.png"
+    },
+    {
+        "merged": "/home/emelgao/.gradle/daemon/8.2/com.example.festival.app-merged_res-31:/mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "/home/emelgao/.gradle/daemon/8.2/com.example.festival.app-main-33:/mipmap-xhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "/home/emelgao/.gradle/daemon/8.2/com.example.festival.app-merged_res-31:/drawable-night_card_tortuga.xml.flat",
+        "source": "/home/emelgao/.gradle/daemon/8.2/com.example.festival.app-main-33:/drawable-night/card_tortuga.xml"
+    },
+    {
+        "merged": "/home/emelgao/.gradle/daemon/8.2/com.example.festival.app-merged_res-31:/drawable-night_card_kodama.xml.flat",
+        "source": "/home/emelgao/.gradle/daemon/8.2/com.example.festival.app-main-33:/drawable-night/card_kodama.xml"
+    },
+    {
+        "merged": "/home/emelgao/.gradle/daemon/8.2/com.example.festival.app-merged_res-31:/layout-night_activity_main.xml.flat",
+        "source": "/home/emelgao/.gradle/daemon/8.2/com.example.festival.app-main-33:/layout-night/activity_main.xml"
+    },
+    {
+        "merged": "com.example.festival.app-merged_res-31:/drawable_card_tortuga.xml.flat",
+        "source": "com.example.festival.app-main-33:/drawable/card_tortuga.xml"
+    },
+    {
+        "merged": "/home/emelgao/.gradle/daemon/8.2/com.example.festival.app-merged_res-31:/drawable_tab_bg.xml.flat",
+        "source": "/home/emelgao/.gradle/daemon/8.2/com.example.festival.app-main-33:/drawable/tab_bg.xml"
+    },
+    {
+        "merged": "/home/emelgao/.gradle/daemon/8.2/com.example.festival.app-merged_res-31:/layout_activity_main.xml.flat",
+        "source": "/home/emelgao/.gradle/daemon/8.2/com.example.festival.app-main-33:/layout/activity_main.xml"
+    },
+    {
+        "merged": "/home/emelgao/.gradle/daemon/8.2/com.example.festival.app-merged_res-31:/drawable_card_kodama.xml.flat",
+        "source": "/home/emelgao/.gradle/daemon/8.2/com.example.festival.app-main-33:/drawable/card_kodama.xml"
+    },
+    {
+        "merged": "com.example.festival.app-merged_res-31:/layout_activity_main.xml.flat",
+        "source": "com.example.festival.app-main-33:/layout/activity_main.xml"
+    },
+    {
+        "merged": "/home/emelgao/.gradle/daemon/8.2/com.example.festival.app-merged_res-31:/layout_activity_lineup.xml.flat",
+        "source": "/home/emelgao/.gradle/daemon/8.2/com.example.festival.app-main-33:/layout/activity_lineup.xml"
+    },
+    {
+        "merged": "com.example.festival.app-merged_res-31:/drawable_card_rage.xml.flat",
+        "source": "com.example.festival.app-main-33:/drawable/card_rage.xml"
+    },
+    {
+        "merged": "/home/emelgao/.gradle/daemon/8.2/com.example.festival.app-merged_res-31:/mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "/home/emelgao/.gradle/daemon/8.2/com.example.festival.app-main-33:/mipmap-xxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "/home/emelgao/.gradle/daemon/8.2/com.example.festival.app-merged_res-31:/mipmap-mdpi_ic_launcher.png.flat",
+        "source": "/home/emelgao/.gradle/daemon/8.2/com.example.festival.app-main-33:/mipmap-mdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.example.festival.app-merged_res-31:/layout_activity_lineup.xml.flat",
+        "source": "com.example.festival.app-main-33:/layout/activity_lineup.xml"
+    },
+    {
+        "merged": "/home/emelgao/.gradle/daemon/8.2/com.example.festival.app-merged_res-31:/drawable_card_rage.xml.flat",
+        "source": "/home/emelgao/.gradle/daemon/8.2/com.example.festival.app-main-33:/drawable/card_rage.xml"
+    },
+    {
+        "merged": "/home/emelgao/.gradle/daemon/8.2/com.example.festival.app-merged_res-31:/mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "/home/emelgao/.gradle/daemon/8.2/com.example.festival.app-main-33:/mipmap-xxxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "/home/emelgao/.gradle/daemon/8.2/com.example.festival.app-merged_res-31:/layout-night_activity_lineup.xml.flat",
+        "source": "/home/emelgao/.gradle/daemon/8.2/com.example.festival.app-main-33:/layout-night/activity_lineup.xml"
+    },
+    {
+        "merged": "/home/emelgao/.gradle/daemon/8.2/com.example.festival.app-merged_res-31:/layout_widget_layout.xml.flat",
+        "source": "/home/emelgao/.gradle/daemon/8.2/com.example.festival.app-main-33:/layout/widget_layout.xml"
+    },
+    {
+        "merged": "/home/emelgao/.gradle/daemon/8.2/com.example.festival.app-merged_res-31:/xml_widget_info.xml.flat",
+        "source": "/home/emelgao/.gradle/daemon/8.2/com.example.festival.app-main-33:/xml/widget_info.xml"
+    },
+    {
+        "merged": "com.example.festival.app-merged_res-31:/drawable_card_kodama.xml.flat",
+        "source": "com.example.festival.app-main-33:/drawable/card_kodama.xml"
+    },
+    {
+        "merged": "/home/emelgao/.gradle/daemon/8.2/com.example.festival.app-merged_res-31:/drawable_card_tortuga.xml.flat",
+        "source": "/home/emelgao/.gradle/daemon/8.2/com.example.festival.app-main-33:/drawable/card_tortuga.xml"
+    },
+    {
+        "merged": "/home/emelgao/.gradle/daemon/8.2/com.example.festival.app-merged_res-31:/drawable-night_card_rage.xml.flat",
+        "source": "/home/emelgao/.gradle/daemon/8.2/com.example.festival.app-main-33:/drawable-night/card_rage.xml"
+    }
+]
