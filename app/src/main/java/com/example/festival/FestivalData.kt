@@ -29,17 +29,93 @@ val stages = listOf(
     "Poliakow Club"
 )
 
-fun stageSubtitle(stage: String): String = when (stage) {
-    "Apsaras" -> "Mainstage · EDM & big room"
-    "Resonance" -> "Techno & hard techno"
-    "Arcade Land" -> "Hardstyle & hardcore"
-    "Beyond" -> "Remember & dance classics"
-    "Dharma" -> "Exclusive stage takeovers"
-    "Beach Club" -> "House & club sounds"
-    "Vertigo" -> "Underground club"
-    "Church Club" -> "Medusa community sets"
-    else -> "Local club & electronic"
-}
+data class StageGuide(
+    val genres: String,
+    val vibe: String,
+    val friday: String,
+    val sunday: String,
+    val chooseIf: String,
+    val intensity: String
+)
+
+private val stageGuides = mapOf(
+    "Apsaras" to StageGuide(
+        genres = "EDM · big room · tech house · melodic techno",
+        vibe = "É o mainstage: palco gigantesco, cerimônias, hits conhecidos e a maior produção visual do festival.",
+        friday = "Vai do groove de Wade e Miss Monique ao impacto de Dimitri Vegas, DJs From Mars e MANDY.",
+        sunday = "Tiësto, Oliver Heldens, Timmy Trumpet e NERVO entregam hits, future house e um final mais pesado.",
+        chooseIf = "você quer nomes grandes, espetáculo e uma pista fácil de curtir mesmo sem conhecer o DJ.",
+        intensity = "★★★★☆ · grande e eufórico"
+    ),
+    "Resonance" to StageGuide(
+        genres = "Tech house · techno · hard techno",
+        vibe = "Pista underground de som contínuo, pouca pausa e foco no DJ. O clima escurece e acelera ao longo da noite.",
+        friday = "Fatima Hajji, Pawlowski, Nico Moreno, Vendex e Fantasm: techno cada vez mais rápido, ácido e pesado.",
+        sunday = "Começa mais groovado com Hugel e Franky Rizardo; passa por Marco Carola e Adam Beyer; fecha brutal com Sara Landry.",
+        chooseIf = "você prefere groove, pista adulta e imersão a shows cheios de interrupções.",
+        intensity = "★★★★★ · pressão crescente"
+    ),
+    "Arcade Land" to StageGuide(
+        genres = "Hardstyle · rawstyle · hardcore · gabber",
+        vibe = "O palco dos BPMs altos, kicks enormes e drops explosivos. É a área mais extrema e física da programação.",
+        friday = "Rebelion, Phuture Noize, D-Sturb, Wildstylez, Gunz For Hire e Partyraiser atravessam hardstyle, raw e hardcore.",
+        sunday = "Furyan, Ophidian, Angerfist, Mad Dog, Anime, Lil Texas e DRS deixam o palco praticamente sem respiro.",
+        chooseIf = "você quer velocidade, impacto no peito e energia máxima do começo ao fim.",
+        intensity = "★★★★★ · o mais pesado"
+    ),
+    "Beyond" to StageGuide(
+        genres = "Remember · dance clássica · makina · jump",
+        vibe = "Um mergulho nostálgico na cultura clubber espanhola: melodias, refrões e clássicos de pista em clima de reencontro.",
+        friday = "Chumi DJ, Javi Boss, DJ Marta, Raul Ortiz, Miguel Serna e Nuria Jump puxam a memória das pistas espanholas.",
+        sunday = "Maratona de DJs nacionais com sets curtos, muita dance clássica, remember e momentos de festa coletiva.",
+        chooseIf = "você gosta de melodias, nostalgia e dançar músicas que a pista inteira reconhece.",
+        intensity = "★★★☆☆ · alegre e nostálgico"
+    ),
+    "Dharma" to StageGuide(
+        genres = "Takeovers: BRESH na sexta · Mákina no domingo",
+        vibe = "Não tem gênero fixo: o palco é entregue a uma festa diferente em cada dia e muda completamente de personalidade.",
+        friday = "BRESH ocupa 12 horas com pop, reggaeton, latin e hits para cantar — uma pausa colorida da eletrônica pesada.",
+        sunday = "Taia, Carnada, Pastis & Buenri, DJ Sisu e Rage Amoretty: makina espanhola rápida, melódica e acelerada.",
+        chooseIf = "você quer BRESH na sexta ou uma aula de makina valenciana no domingo.",
+        intensity = "Variável · ★★★☆☆ → ★★★★★"
+    ),
+    "Beach Club" to StageGuide(
+        genres = "Takeovers · techno flamenco · hard techno",
+        vibe = "Palco à beira da areia, mais próximo e com identidade definida pelo takeover do dia; começa solar e pode terminar duríssimo.",
+        friday = "Techno Flamenco mistura batidas de club, house/techno e acento espanhol, com Marsal Ventura no centro da noite.",
+        sunday = "H4R traz Onlynumbers, Dyen e outros nomes para uma sequência de hard techno rápida e industrial.",
+        chooseIf = "você quer dançar perto da praia ou experimentar uma curadoria temática bem diferente do mainstage.",
+        intensity = "★★★★☆ · aumenta de madrugada"
+    ),
+    "Vertigo" to StageGuide(
+        genres = "House underground · minimal/deep tech · tech house",
+        vibe = "Um clube dentro do festival: menor, escuro e íntimo, com sets mais longos e sensação de estar perto da cabine.",
+        friday = "Paula Fields, Karlos Molina, Jaime Soeiro, Fran Hernandez e Easttown constroem uma noite de house e club underground.",
+        sunday = "Wololo Soundsystem, Rendher e Pive mantêm o groove minimal/tech com menos espetáculo e mais pista.",
+        chooseIf = "você quer fugir da multidão do mainstage e entrar numa pista com clima de club.",
+        intensity = "★★★☆☆ · íntimo e hipnótico"
+    ),
+    "Church Club" to StageGuide(
+        genres = "Open decks · DJs emergentes · seleção variável",
+        vibe = "A cabine aberta da comunidade Medusa. É um espaço de descoberta, com talentos novos e estilos que podem mudar durante a sessão.",
+        friday = "DJs da Comunidade Medusa assumem das 22h às 04h; a graça é chegar sem expectativa e descobrir quem está tocando.",
+        sunday = "A comunidade volta no mesmo formato aberto, bom para uma parada espontânea entre dois sets planejados.",
+        chooseIf = "você curte descobrir DJs, apoiar gente nova e aceitar uma programação menos previsível.",
+        intensity = "Variável · depende da cabine"
+    ),
+    "Poliakow Club" to StageGuide(
+        genres = "House · dance · eletrônica local · open format",
+        vibe = "Palco compacto e direto, com DJs locais e sets acessíveis. Funciona bem como ponto de descoberta ou transição entre atrações grandes.",
+        friday = "Asesor, Anderson R, Dario Huerta, Nico Guerra, Ruben Vibes e Àlex Mapi conduzem a noite em formato de club.",
+        sunday = "Ink 83, Jorge Quel, Toni Tega, Sweet Suarez, Alvaro Varen, Fercho Energy e Saldivar mantêm a pista variada.",
+        chooseIf = "você quer algo menor, espontâneo e sem compromisso com um único subgênero.",
+        intensity = "★★★☆☆ · flexível e acessível"
+    )
+)
+
+fun stageGuide(stage: String): StageGuide = stageGuides.getValue(stage)
+
+fun stageSubtitle(stage: String): String = stageGuide(stage).genres
 
 fun stageColor(stage: String): Int = when (stage) {
     "Apsaras" -> 0xFFFFD36A.toInt()
@@ -72,9 +148,15 @@ fun stageCardBg(stage: String): Int = when (stage) {
 }
 
 fun stageImage(stage: String): Int = when (stage) {
-    "Apsaras", "Dharma", "Beach Club" -> R.drawable.stage_organic
-    "Arcade Land", "Beyond", "Church Club" -> R.drawable.stage_neon
-    else -> R.drawable.stage_techno
+    "Apsaras" -> R.drawable.stage_apsaras
+    "Resonance" -> R.drawable.stage_resonance
+    "Arcade Land" -> R.drawable.stage_arcade_land
+    "Beyond" -> R.drawable.stage_beyond
+    "Dharma" -> R.drawable.stage_dharma
+    "Beach Club" -> R.drawable.stage_beach_club
+    "Vertigo" -> R.drawable.stage_vertigo
+    "Church Club" -> R.drawable.stage_church_club
+    else -> R.drawable.stage_poliakow_club
 }
 
 private fun act(

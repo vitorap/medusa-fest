@@ -26,13 +26,20 @@ class LineupActivity : AppCompatActivity() {
         FavoriteReminders.createNotificationChannel(this)
 
         stages.forEach { tabLayout.addTab(tabLayout.newTab().setText(it)) }
-        showStage(stages.first())
 
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) { showStage(tab.text.toString()) }
             override fun onTabUnselected(tab: TabLayout.Tab) {}
             override fun onTabReselected(tab: TabLayout.Tab) {}
         })
+
+        val initialStage = intent.getStringExtra("stage")?.takeIf { it in stages } ?: stages.first()
+        val initialIndex = stages.indexOf(initialStage)
+        if (tabLayout.selectedTabPosition == initialIndex) {
+            showStage(initialStage)
+        } else {
+            tabLayout.getTabAt(initialIndex)?.select()
+        }
 
         findViewById<Button>(R.id.btnJumpNow).setOnClickListener { jumpToNow() }
         findViewById<Button>(R.id.btnBack).setOnClickListener { finish() }
@@ -49,6 +56,8 @@ class LineupActivity : AppCompatActivity() {
         val color = stageColor(stage)
         val dimColor = stageDimColor(stage)
         val cardBg = stageCardBg(stage)
+
+        content.addView(createStageGuideCard(stage, color, cardBg))
 
         var lastDay = -1
         var actIndex = 0
@@ -147,6 +156,51 @@ class LineupActivity : AppCompatActivity() {
                 .start()
             actIndex++
             if (isCurrent) nowView = card
+        }
+    }
+
+    private fun createStageGuideCard(stage: String, color: Int, cardBg: Int): LinearLayout {
+        val guide = stageGuide(stage)
+        return LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setBackgroundResource(cardBg)
+            setPadding(dp(16), dp(14), dp(16), dp(14))
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                topMargin = dp(12)
+                bottomMargin = dp(4)
+            }
+
+            addView(TextView(this@LineupActivity).apply {
+                text = "COMO É ESTE PALCO"
+                setTextColor(color)
+                textSize = 11f
+                typeface = Typeface.create("sans-serif-medium", Typeface.BOLD)
+                letterSpacing = 0.08f
+            })
+            addView(TextView(this@LineupActivity).apply {
+                text = guide.genres
+                setTextColor(0xFFFFFFFF.toInt())
+                textSize = 14f
+                typeface = Typeface.create("sans-serif-medium", Typeface.BOLD)
+                setPadding(0, dp(5), 0, 0)
+            })
+            addView(TextView(this@LineupActivity).apply {
+                text = "${guide.vibe}\n\nSEXTA 14 · ${guide.friday}\n\nDOMINGO 16 · ${guide.sunday}\n\nVÁ SE… ${guide.chooseIf}\n\n${guide.intensity}"
+                setTextColor(0xFFCBCBCB.toInt())
+                textSize = 12.5f
+                typeface = Typeface.create("sans-serif", Typeface.NORMAL)
+                setLineSpacing(0f, 1.08f)
+                setPadding(0, dp(7), 0, 0)
+            })
+            addView(TextView(this@LineupActivity).apply {
+                text = "Guia prático baseado no lineup e nos takeovers oficiais; o estilo de cada set pode variar."
+                setTextColor(0xFF7F8E89.toInt())
+                textSize = 10f
+                setPadding(0, dp(9), 0, 0)
+            })
         }
     }
 

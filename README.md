@@ -16,10 +16,11 @@ Aplicativo Android não oficial para acompanhar o Medusa Festival em Cullera. Es
 
 - artista tocando agora e próximo set em cada palco;
 - programação completa por palco e dia;
+- guia de gêneros, clima, intensidade e diferenças entre sexta e domingo;
 - favoritos com alerta no início do set;
 - busca de artistas no Spotify, YouTube, SoundCloud e Google;
 - widget com Apsaras, Resonance e Arcade Land;
-- identidade visual original inspirada no universo Apsaras/Medusa.
+- nove artes exclusivas — uma identidade visual própria para cada palco.
 
 ## Fontes da programação
 

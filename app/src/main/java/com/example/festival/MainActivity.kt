@@ -78,6 +78,7 @@ class MainActivity : AppCompatActivity() {
             .setMessage(
                 "Seu guia pessoal para sexta 14 e domingo 16:\n\n" +
                     "• Veja o que está tocando agora nos 9 palcos.\n\n" +
+                    "• Toque em GUIA DO PALCO para comparar gêneros, clima e intensidade em cada dia.\n\n" +
                     "• Abra LINEUP e toque num artista para favoritar.\n\n" +
                     "• O app agenda um alerta para o início do set.\n\n" +
                     "• Pesquise cada artista no Spotify, YouTube, SoundCloud ou Google.\n\n" +
@@ -96,7 +97,7 @@ class MainActivity : AppCompatActivity() {
             setCardBackgroundColor(Color.BLACK)
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
-                dp(154)
+                dp(178)
             ).apply { bottomMargin = dp(10) }
         }
 
@@ -122,6 +123,18 @@ class MainActivity : AppCompatActivity() {
             includeFontPadding = false
         })
 
+        content.addView(TextView(this).apply {
+            text = stageGuide(stage).genres
+            setTextColor(stageColor(stage))
+            alpha = 0.78f
+            textSize = 10.5f
+            typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+            includeFontPadding = false
+            maxLines = 1
+            ellipsize = android.text.TextUtils.TruncateAt.END
+            setPadding(0, dp(2), 0, 0)
+        })
+
         val status = TextView(this).apply {
             setTextColor(Color.WHITE)
             textSize = 12.5f
@@ -137,6 +150,14 @@ class MainActivity : AppCompatActivity() {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER_VERTICAL
         }
+        val guide = TextView(this).apply {
+            text = "ⓘ GUIA DO PALCO"
+            setTextColor(stageColor(stage))
+            textSize = 10f
+            typeface = Typeface.create("sans-serif-medium", Typeface.BOLD)
+            gravity = Gravity.CENTER_VERTICAL
+            setOnClickListener { showStageGuide(stage) }
+        }
         val favorite = TextView(this).apply {
             gravity = Gravity.CENTER
             setTextColor(0xFFFFD36A.toInt())
@@ -144,6 +165,7 @@ class MainActivity : AppCompatActivity() {
             setPadding(0, 0, dp(10), 0)
         }
         val links = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+        bottom.addView(guide, LinearLayout.LayoutParams(0, dp(30), 1f))
         bottom.addView(favorite, LinearLayout.LayoutParams(dp(34), dp(30)))
         bottom.addView(links)
         content.addView(bottom)
@@ -152,6 +174,25 @@ class MainActivity : AppCompatActivity() {
         card.addView(frame)
         stageViews += StageViews(stage, status, links, favorite)
         return card
+    }
+
+    private fun showStageGuide(stage: String) {
+        val guide = stageGuide(stage)
+        val message = "GÊNEROS\n${guide.genres}\n\n" +
+            "CLIMA\n${guide.vibe}\n\n" +
+            "SEXTA 14\n${guide.friday}\n\n" +
+            "DOMINGO 16\n${guide.sunday}\n\n" +
+            "VÁ SE…\n${guide.chooseIf}\n\n" +
+            "INTENSIDADE\n${guide.intensity}"
+
+        AlertDialog.Builder(this)
+            .setTitle(stage)
+            .setMessage(message)
+            .setNegativeButton("Fechar", null)
+            .setPositiveButton("Ver lineup") { _, _ ->
+                startActivity(Intent(this, LineupActivity::class.java).putExtra("stage", stage))
+            }
+            .show()
     }
 
     private fun updateDisplay() {
