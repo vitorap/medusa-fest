@@ -10,12 +10,16 @@ import java.util.Calendar
 class FestivalWidget : AppWidgetProvider() {
 
     override fun onUpdate(ctx: Context, mgr: AppWidgetManager, ids: IntArray) {
-        val cal = Calendar.getInstance()
-        val nowMin = cal.get(Calendar.DAY_OF_MONTH) * 24 * 60 + cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE)
+        val now = System.currentTimeMillis()
 
         fun current(stage: String): String {
-            val act = lineup.filter { it.stage == stage && actMinutes(it) <= nowMin }.maxByOrNull { actMinutes(it) }
-            return if (act != null) "${act.name}\n${formatTime(act)}" else "\u2014"
+            val live = lineup.firstOrNull { it.stage == stage && isActLive(it, now) }
+            if (live != null) return "${live.name}\n${formatTime(live)}"
+
+            val next = lineup
+                .filter { it.stage == stage && actStartMillis(it) > now }
+                .minByOrNull(::actMinutes)
+            return if (next != null) "Próximo: ${next.name}\n${eventDayLabel(next.eventDay)} · ${formatTime(next)}" else "Programação encerrada"
         }
 
         val launchIntent = Intent(ctx, MainActivity::class.java)
@@ -23,9 +27,9 @@ class FestivalWidget : AppWidgetProvider() {
 
         for (id in ids) {
             val views = RemoteViews(ctx.packageName, R.layout.widget_layout)
-            views.setTextViewText(R.id.wRage, "\uD83D\uDD34 ${current("Rage")}")
-            views.setTextViewText(R.id.wKodama, "\uD83D\uDFE2 ${current("Kodama")}")
-            views.setTextViewText(R.id.wTortuga, "\uD83D\uDFE1 ${current("Tortuga")}")
+            views.setTextViewText(R.id.wRage, "✨ Apsaras\n${current("Apsaras")}")
+            views.setTextViewText(R.id.wKodama, "⚡ Resonance\n${current("Resonance")}")
+            views.setTextViewText(R.id.wTortuga, "🎮 Arcade Land\n${current("Arcade Land")}")
             views.setOnClickPendingIntent(R.id.widgetRoot, pi)
             mgr.updateAppWidget(id, views)
         }

@@ -30,11 +30,11 @@ class FavoritesActivity : AppCompatActivity() {
 
     private fun renderFavorites() {
         content.removeAllViews()
-        val favorites = lineup.filter { Favorites.isFav(it.name) }.sortedBy { actMinutes(it) }
+        val favorites = lineup.filter(Favorites::isFav).sortedBy(::actMinutes)
 
         if (favorites.isEmpty()) {
             content.addView(TextView(this).apply {
-                text = "No favorites yet"
+                text = "Nenhum artista favorito ainda"
                 setTextColor(0xFF9e9e9e.toInt())
                 textSize = 14f
                 gravity = Gravity.CENTER
@@ -66,7 +66,7 @@ class FavoritesActivity : AppCompatActivity() {
                 includeFontPadding = false
             })
             card.addView(TextView(this).apply {
-                text = "${act.stage} - Day ${act.day} - ${formatTime(act)}"
+                text = "${act.stage} · ${eventDayLabel(act.eventDay)} · ${formatTime(act)}"
                 setTextColor(dimColor)
                 textSize = 11.5f
                 typeface = Typeface.create("sans-serif-condensed", Typeface.NORMAL)
@@ -87,15 +87,15 @@ class FavoritesActivity : AppCompatActivity() {
                 setPadding(0, dp(8), 0, 0)
             }
             actions.addView(TextView(this).apply {
-                text = "Remove"
-                setTextColor(0xFFbb86fc.toInt())
+                text = "Remover"
+                setTextColor(0xFFFFD36A.toInt())
                 textSize = 11f
                 typeface = Typeface.create("sans-serif-medium", Typeface.BOLD)
                 setPadding(0, 0, dp(14), 0)
                 layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
                 setOnClickListener {
                     FavoriteReminders.toggle(this@FavoritesActivity, act)
-                    Toast.makeText(this@FavoritesActivity, "Removed ${act.name}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@FavoritesActivity, "${act.name} removido", Toast.LENGTH_SHORT).show()
                     renderFavorites()
                 }
             })
@@ -111,24 +111,6 @@ class FavoritesActivity : AppCompatActivity() {
                 .setInterpolator(DecelerateInterpolator())
                 .start()
         }
-    }
-
-    private fun stageColor(stage: String): Int = when (stage) {
-        "Rage" -> 0xFFff6b6b.toInt()
-        "Kodama" -> 0xFF69f0ae.toInt()
-        else -> 0xFFffd740.toInt()
-    }
-
-    private fun stageDimColor(stage: String): Int = when (stage) {
-        "Rage" -> 0xFF993333.toInt()
-        "Kodama" -> 0xFF338855.toInt()
-        else -> 0xFF997722.toInt()
-    }
-
-    private fun stageCardBg(stage: String): Int = when (stage) {
-        "Rage" -> R.drawable.card_rage
-        "Kodama" -> R.drawable.card_kodama
-        else -> R.drawable.card_tortuga
     }
 
     private fun dp(v: Int): Int {

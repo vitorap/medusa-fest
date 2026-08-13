@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#000000">
+    android:background="#050805">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,16 +16,16 @@
         <Button android:id="@+id/btnBackFavorites"
             android:layout_width="wrap_content"
             android:layout_height="36dp"
-            android:text="← Back"
+            android:text="← Voltar"
             android:textSize="12sp"
-            android:backgroundTint="#1a1a2e"
-            android:textColor="#bb86fc"/>
+            android:backgroundTint="#172219"
+            android:textColor="#FFD36A"/>
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="FAVORITES"
-            android:textColor="#bb86fc"
+            android:text="FAVORITOS"
+            android:textColor="#FFD36A"
             android:textSize="18sp"
             android:textStyle="bold"
             android:letterSpacing="0"

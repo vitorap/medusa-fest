@@ -10,7 +10,6 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.tabs.TabLayout
-import java.util.Calendar
 
 class LineupActivity : AppCompatActivity() {
     private lateinit var tabLayout: TabLayout
@@ -26,8 +25,8 @@ class LineupActivity : AppCompatActivity() {
         scrollView = findViewById(R.id.scrollView)
         FavoriteReminders.createNotificationChannel(this)
 
-        listOf("Rage", "Kodama", "Tortuga").forEach { tabLayout.addTab(tabLayout.newTab().setText(it)) }
-        showStage("Rage")
+        stages.forEach { tabLayout.addTab(tabLayout.newTab().setText(it)) }
+        showStage(stages.first())
 
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) { showStage(tab.text.toString()) }
@@ -45,26 +44,18 @@ class LineupActivity : AppCompatActivity() {
         content.removeAllViews()
         nowView = null
         val acts = lineup.filter { it.stage == stage }.sortedBy { actMinutes(it) }
-        val cal = Calendar.getInstance()
-        val nowMin = cal.get(Calendar.DAY_OF_MONTH) * 24 * 60 + cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE)
-        val currentAct = acts.filter { actMinutes(it) <= nowMin }.maxByOrNull { actMinutes(it) }
-
-        val color = when (stage) {
-            "Rage" -> 0xFFff6b6b.toInt(); "Kodama" -> 0xFF69f0ae.toInt(); else -> 0xFFffd740.toInt()
-        }
-        val dimColor = when (stage) {
-            "Rage" -> 0xFF993333.toInt(); "Kodama" -> 0xFF338855.toInt(); else -> 0xFF997722.toInt()
-        }
-        val cardBg = when (stage) {
-            "Rage" -> R.drawable.card_rage; "Kodama" -> R.drawable.card_kodama; else -> R.drawable.card_tortuga
-        }
+        val now = System.currentTimeMillis()
+        val currentAct = acts.firstOrNull { isActLive(it, now) }
+        val color = stageColor(stage)
+        val dimColor = stageDimColor(stage)
+        val cardBg = stageCardBg(stage)
 
         var lastDay = -1
         var actIndex = 0
         for (act in acts) {
-            if (act.day != lastDay) {
-                lastDay = act.day
-                val dayLabel = when (act.day) { 15 -> "FRIDAY"; 16 -> "SATURDAY"; 17 -> "SUNDAY"; else -> "MONDAY" }
+            if (act.eventDay != lastDay) {
+                lastDay = act.eventDay
+                val dayLabel = eventDayLabel(act.eventDay)
                 val header = TextView(this).apply {
                     text = "\u2014  $dayLabel  \u2014"
                     setTextColor(0xFF9e9e9e.toInt())
@@ -90,7 +81,7 @@ class LineupActivity : AppCompatActivity() {
                 translationY = dp(10).toFloat()
             }
 
-            val fav = if (Favorites.isFav(act.name)) "\u2B50 " else ""
+            val fav = if (Favorites.isFav(act)) "\u2B50 " else ""
 
             val titleTv = TextView(this).apply {
                 text = "$fav${act.name}"
@@ -128,8 +119,8 @@ class LineupActivity : AppCompatActivity() {
             }
             if (isCurrent) {
                 val nowLabel = TextView(this).apply {
-                    text = "\u25B6 NOW PLAYING"
-                    setTextColor(0xFFbb86fc.toInt())
+                    text = "\u25B6 TOCANDO AGORA"
+                    setTextColor(0xFFFFD36A.toInt())
                     textSize = 10f
                     letterSpacing = 0f
                     typeface = Typeface.create("sans-serif-medium", Typeface.BOLD)
@@ -168,10 +159,10 @@ class LineupActivity : AppCompatActivity() {
     private fun toggleFavWithReminder(act: Act, stage: String) {
         val result = FavoriteReminders.toggle(this, act)
         if (result.isFavorite) {
-            val msg = if (result.reminderScheduled) "\u2B50 ${act.name} \u2014 start alert set" else "\u2B50 ${act.name} saved"
+            val msg = if (result.reminderScheduled) "\u2B50 ${act.name} \u2014 alerta agendado" else "\u2B50 ${act.name} salvo"
             Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
         } else {
-            Toast.makeText(this, "Removed ${act.name}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "${act.name} removido", Toast.LENGTH_SHORT).show()
         }
         showStage(stage)
     }

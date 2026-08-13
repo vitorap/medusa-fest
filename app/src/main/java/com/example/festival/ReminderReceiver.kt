@@ -12,7 +12,7 @@ class ReminderReceiver : BroadcastReceiver() {
         val channelId = "festival_reminders"
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val ch = NotificationChannel(channelId, "Festival Reminders", NotificationManager.IMPORTANCE_HIGH)
+            val ch = NotificationChannel(channelId, "Alertas Medusa", NotificationManager.IMPORTANCE_HIGH)
             (ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannel(ch)
         }
 
@@ -25,8 +25,8 @@ class ReminderReceiver : BroadcastReceiver() {
 
         val notification = NotificationCompat.Builder(ctx, channelId)
             .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
-            .setContentTitle("\uD83C\uDFB5 Show started")
-            .setContentText("$name @ $stage Stage")
+            .setContentTitle("🎵 O set começou")
+            .setContentText("$name · $stage")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(openApp)
             .setAutoCancel(true)
