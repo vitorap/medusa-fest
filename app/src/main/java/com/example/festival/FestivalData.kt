@@ -14,7 +14,9 @@ data class Act(
     val minute: Int,
     val durationMinutes: Int,
     val name: String,
-    val description: String
+    val tags: String,
+    val description: String,
+    val tranceFocus: TranceFocus
 )
 
 val stages = listOf(
@@ -40,10 +42,10 @@ data class StageGuide(
 
 private val stageGuides = mapOf(
     "Apsaras" to StageGuide(
-        genres = "EDM · big room · tech house · melodic techno",
+        genres = "EDM · big room · house · trance em momentos-chave",
         vibe = "É o mainstage: palco gigantesco, cerimônias, hits conhecidos e a maior produção visual do festival.",
         friday = "Vai do groove de Wade e Miss Monique ao impacto de Dimitri Vegas, DJs From Mars e MANDY.",
-        sunday = "Tiësto, Oliver Heldens, Timmy Trumpet e NERVO entregam hits, future house e um final mais pesado.",
+        sunday = "Tiësto traz seu retorno ao trance; Oliver Heldens e Timmy Trumpet são pontes adjacentes antes do hard techno e de NERVO.",
         chooseIf = "você quer nomes grandes, espetáculo e uma pista fácil de curtir mesmo sem conhecer o DJ.",
         intensity = "★★★★☆ · grande e eufórico"
     ),
@@ -64,12 +66,12 @@ private val stageGuides = mapOf(
         intensity = "★★★★★ · o mais pesado"
     ),
     "Beyond" to StageGuide(
-        genres = "Remember · dance clássica · makina · jump",
-        vibe = "Um mergulho nostálgico na cultura clubber espanhola: melodias, refrões e clássicos de pista em clima de reencontro.",
+        genres = "Sexta: remember/dance · Domingo: urban, hits e open format",
+        vibe = "É o palco mais mutante entre os dois dias: memória clubber espanhola na sexta e uma festa urbana/comercial no domingo.",
         friday = "Chumi DJ, Javi Boss, DJ Marta, Raul Ortiz, Miguel Serna e Nuria Jump puxam a memória das pistas espanholas.",
-        sunday = "Maratona de DJs nacionais com sets curtos, muita dance clássica, remember e momentos de festa coletiva.",
-        chooseIf = "você gosta de melodias, nostalgia e dançar músicas que a pista inteira reconhece.",
-        intensity = "★★★☆☆ · alegre e nostálgico"
+        sunday = "Arnny Montana, J.Beren, Totote, Space Elephants e Michael Rod atravessam reggaeton, latin, mashups, EDM e hits.",
+        chooseIf = "você quer nostalgia na sexta ou cantar e dançar músicas reconhecíveis no domingo.",
+        intensity = "★★★☆☆ · nostálgico → festivo"
     ),
     "Dharma" to StageGuide(
         genres = "Takeovers: BRESH na sexta · Mákina no domingo",
@@ -80,10 +82,10 @@ private val stageGuides = mapOf(
         intensity = "Variável · ★★★☆☆ → ★★★★★"
     ),
     "Beach Club" to StageGuide(
-        genres = "Takeovers · techno flamenco · hard techno",
+        genres = "Takeovers · techno flamenco · hard techno/techno-trance",
         vibe = "Palco à beira da areia, mais próximo e com identidade definida pelo takeover do dia; começa solar e pode terminar duríssimo.",
         friday = "Techno Flamenco mistura batidas de club, house/techno e acento espanhol, com Marsal Ventura no centro da noite.",
-        sunday = "H4R traz Onlynumbers, Dyen e outros nomes para uma sequência de hard techno rápida e industrial.",
+        sunday = "H4R acelera do hard techno ao techno-trance de Brenda Serna, passando pela euforia de Onlynumbers e pelos synths trance de Dyen.",
         chooseIf = "você quer dançar perto da praia ou experimentar uma curadoria temática bem diferente do mainstage.",
         intensity = "★★★★☆ · aumenta de madrugada"
     ),
@@ -166,10 +168,23 @@ private fun act(
     start: String,
     durationMinutes: Int,
     name: String,
-    description: String = stageSubtitle(stage)
+    note: String? = null
 ): Act {
     val (hour, minute) = start.split(":").map(String::toInt)
-    return Act(stage, eventDay, day, hour, minute, durationMinutes, name, description)
+    val profile = artistProfile(name)
+    val description = if (note == null) profile.description else "${profile.description} · $note"
+    return Act(
+        stage,
+        eventDay,
+        day,
+        hour,
+        minute,
+        durationMinutes,
+        name,
+        profile.tags,
+        description,
+        profile.tranceFocus
+    )
 }
 
 // Official timetable for the two festival days in Vitor's itinerary: Friday 14 and Sunday 16.
@@ -179,7 +194,7 @@ val lineup = listOf(
     act("Apsaras", 14, 14, "19:00", 60, "Hektor Mass"),
     act("Apsaras", 14, 14, "20:00", 60, "Rello"),
     act("Apsaras", 14, 14, "21:00", 120, "Wade"),
-    act("Apsaras", 14, 14, "23:30", 60, "Miss Monique", "Opening ceremony · Mainstage"),
+    act("Apsaras", 14, 14, "23:30", 60, "Miss Monique", "Cerimônia de abertura do mainstage"),
     act("Apsaras", 14, 15, "00:30", 60, "HALŌ"),
     act("Apsaras", 14, 15, "01:30", 90, "Dimitri Vegas"),
     act("Apsaras", 14, 15, "03:00", 60, "DJs From Mars"),
@@ -216,21 +231,21 @@ val lineup = listOf(
     act("Beyond", 14, 14, "21:45", 75, "Javi Boss"),
     act("Beyond", 14, 14, "23:00", 60, "DJ Marta"),
     act("Beyond", 14, 15, "00:00", 60, "Rafa XL"),
-    act("Beyond", 14, 15, "01:05", 145, "Raul Ortiz", "Intro 01:00 · Remember & dance classics"),
+    act("Beyond", 14, 15, "01:05", 145, "Raul Ortiz", "Introdução às 01:00"),
     act("Beyond", 14, 15, "03:30", 60, "Miguel Serna"),
     act("Beyond", 14, 15, "04:30", 90, "Nuria Jump"),
 
     // Friday 14 · Dharma
-    act("Dharma", 14, 14, "17:00", 720, "BRESH", "Exclusive stage takeover · 17:00–05:00"),
+    act("Dharma", 14, 14, "17:00", 720, "BRESH", "Takeover exclusivo · 17:00–05:00"),
 
     // Friday 14 · Beach Club
-    act("Beach Club", 14, 14, "19:00", 60, "DJ German", "Techno Flamenco takeover"),
-    act("Beach Club", 14, 14, "20:00", 60, "Eloy GC B2B Erik Romero", "Techno Flamenco takeover"),
-    act("Beach Club", 14, 14, "21:00", 60, "Ian Tules", "Techno Flamenco takeover"),
-    act("Beach Club", 14, 14, "22:00", 240, "Marsal Ventura", "Techno Flamenco takeover"),
-    act("Beach Club", 14, 15, "02:00", 60, "Los Prados", "Techno Flamenco takeover"),
-    act("Beach Club", 14, 15, "03:00", 60, "Dany BPM", "Techno Flamenco takeover"),
-    act("Beach Club", 14, 15, "04:00", 60, "Pomata", "Techno Flamenco takeover"),
+    act("Beach Club", 14, 14, "19:00", 60, "DJ German", "Takeover Techno Flamenco"),
+    act("Beach Club", 14, 14, "20:00", 60, "Eloy GC B2B Erik Romero", "Takeover Techno Flamenco"),
+    act("Beach Club", 14, 14, "21:00", 60, "Ian Tules", "Takeover Techno Flamenco"),
+    act("Beach Club", 14, 14, "22:00", 240, "Marsal Ventura", "Takeover Techno Flamenco"),
+    act("Beach Club", 14, 15, "02:00", 60, "Los Prados", "Takeover Techno Flamenco"),
+    act("Beach Club", 14, 15, "03:00", 60, "Dany BPM", "Takeover Techno Flamenco"),
+    act("Beach Club", 14, 15, "04:00", 60, "Pomata", "Takeover Techno Flamenco"),
 
     // Friday 14 · Vertigo
     act("Vertigo", 14, 14, "17:00", 150, "Mireia CJ"),
@@ -255,7 +270,7 @@ val lineup = listOf(
     act("Apsaras", 16, 16, "19:00", 60, "Hektor Mass"),
     act("Apsaras", 16, 16, "20:00", 80, "Alvama Ice"),
     act("Apsaras", 16, 16, "21:30", 90, "Tiësto"),
-    act("Apsaras", 16, 16, "23:10", 50, "T.B.A", "Opening ceremony · Mainstage"),
+    act("Apsaras", 16, 16, "23:10", 50, "T.B.A", "Cerimônia de abertura do mainstage"),
     act("Apsaras", 16, 17, "00:00", 90, "Oliver Heldens"),
     act("Apsaras", 16, 17, "01:30", 75, "Timmy Trumpet"),
     act("Apsaras", 16, 17, "02:45", 90, "Holy Priest"),
@@ -299,19 +314,19 @@ val lineup = listOf(
     act("Beyond", 16, 17, "05:00", 60, "Michael Rod"),
 
     // Sunday 16 · Dharma
-    act("Dharma", 16, 16, "19:00", 120, "Taia", "Makina takeover"),
-    act("Dharma", 16, 16, "21:00", 120, "Carnada", "Makina takeover"),
-    act("Dharma", 16, 16, "23:00", 300, "Pastis & Buenri & DJ Sisu", "Makina takeover"),
-    act("Dharma", 16, 17, "04:00", 120, "Rage Amoretty", "Makina takeover"),
+    act("Dharma", 16, 16, "19:00", 120, "Taia", "Takeover Universo Makina"),
+    act("Dharma", 16, 16, "21:00", 120, "Carnada", "Takeover Universo Makina"),
+    act("Dharma", 16, 16, "23:00", 300, "Pastis & Buenri & DJ Sisu", "Takeover Universo Makina"),
+    act("Dharma", 16, 17, "04:00", 120, "Rage Amoretty", "Takeover Universo Makina"),
 
     // Sunday 16 · Beach Club
-    act("Beach Club", 16, 16, "18:00", 90, "Sephax", "H4R exclusive stage"),
-    act("Beach Club", 16, 16, "19:30", 90, "Lucia Gea", "H4R exclusive stage"),
-    act("Beach Club", 16, 16, "21:00", 120, "Winson", "H4R exclusive stage"),
-    act("Beach Club", 16, 16, "23:00", 120, "Brenda Serna", "H4R exclusive stage"),
-    act("Beach Club", 16, 17, "01:00", 90, "Onlynumbers", "H4R exclusive stage"),
-    act("Beach Club", 16, 17, "02:30", 120, "Dyen", "H4R exclusive stage"),
-    act("Beach Club", 16, 17, "04:30", 90, "Nico Bondi B3B Krow B3B TBR", "H4R exclusive stage"),
+    act("Beach Club", 16, 16, "18:00", 90, "Sephax", "Palco exclusivo H4R"),
+    act("Beach Club", 16, 16, "19:30", 90, "Lucia Gea", "Palco exclusivo H4R"),
+    act("Beach Club", 16, 16, "21:00", 120, "Winson", "Palco exclusivo H4R"),
+    act("Beach Club", 16, 16, "23:00", 120, "Brenda Serna", "Palco exclusivo H4R"),
+    act("Beach Club", 16, 17, "01:00", 90, "Onlynumbers", "Palco exclusivo H4R"),
+    act("Beach Club", 16, 17, "02:30", 120, "Dyen", "Palco exclusivo H4R"),
+    act("Beach Club", 16, 17, "04:30", 90, "Nico Bondi B3B Krow B3B TBR", "Palco exclusivo H4R"),
 
     // Sunday 16 · Vertigo
     act("Vertigo", 16, 16, "17:00", 150, "Mario Vice"),

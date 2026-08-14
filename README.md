@@ -17,6 +17,8 @@ Aplicativo Android não oficial para acompanhar o Medusa Festival em Cullera. Es
 - artista tocando agora e próximo set em cada palco;
 - programação completa por palco e dia;
 - guia de gêneros, clima, intensidade e diferenças entre sexta e domingo;
+- perfil pesquisado dos 118 artistas, com gênero, assinatura e referências relevantes;
+- Radar Trance que diferencia trance confirmado de artistas apenas adjacentes ao gênero;
 - favoritos com alerta no início do set;
 - busca de artistas no Spotify, YouTube, SoundCloud e Google;
 - widget com Apsaras, Resonance e Arcade Land;
@@ -30,6 +32,8 @@ Os horários foram transcritos dos materiais publicados pelo Medusa Festival:
 - [Publicação oficial sobre os nove palcos](https://www.instagram.com/p/Db8qCf9CBPe/)
 
 O festival pode alterar a grade. Confirme os horários nos canais oficiais antes do evento.
+
+As descrições artísticas foram cruzadas com páginas oficiais, selos, agências, imprensa musical e publicações especializadas. Quando não há biografia pública confiável, o texto se limita ao papel do artista na curadoria do palco, sem atribuir faixas ou histórico não verificados.
 
 ## Compilar
 

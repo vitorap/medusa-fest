@@ -46,6 +46,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         val container = findViewById<LinearLayout>(R.id.stageContainer)
+        container.addView(createTranceRadarCard())
         stages.forEach { stage -> container.addView(createStageCard(stage)) }
         showWelcome()
         updateDisplay()
@@ -78,6 +79,7 @@ class MainActivity : AppCompatActivity() {
             .setMessage(
                 "Seu guia pessoal para sexta 14 e domingo 16:\n\n" +
                     "• Veja o que está tocando agora nos 9 palcos.\n\n" +
+                    "• Abra o RADAR TRANCE para separar trance de verdade dos artistas apenas adjacentes.\n\n" +
                     "• Toque em GUIA DO PALCO para comparar gêneros, clima e intensidade em cada dia.\n\n" +
                     "• Abra LINEUP e toque num artista para favoritar.\n\n" +
                     "• O app agenda um alerta para o início do set.\n\n" +
@@ -85,6 +87,73 @@ class MainActivity : AppCompatActivity() {
                     "Os horários seguem a grade oficial do Medusa. Boa festa! 🦋"
             )
             .setPositiveButton("Bora!") { dialog, _ -> dialog.dismiss() }
+            .show()
+    }
+
+    private fun createTranceRadarCard(): MaterialCardView {
+        val card = MaterialCardView(this).apply {
+            radius = dp(16).toFloat()
+            cardElevation = 0f
+            strokeColor = 0xFF62DFFF.toInt()
+            strokeWidth = dp(1)
+            setCardBackgroundColor(0xFF07171C.toInt())
+            isClickable = true
+            isFocusable = true
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply { bottomMargin = dp(12) }
+            setOnClickListener { showTranceRadar() }
+        }
+
+        card.addView(LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(16), dp(14), dp(16), dp(14))
+            addView(TextView(this@MainActivity).apply {
+                text = "🌀 RADAR TRANCE"
+                setTextColor(0xFF7FE7FF.toInt())
+                textSize = 15f
+                typeface = Typeface.create("sans-serif-medium", Typeface.BOLD)
+                includeFontPadding = false
+            })
+            addView(TextView(this@MainActivity).apply {
+                text = "TRANCE EM FOCO · Tiësto + Brenda Serna\nADJACENTES · Pawlowski, Oliver Heldens, Timmy Trumpet, DYEN, Onlynumbers e mais"
+                setTextColor(Color.WHITE)
+                textSize = 12f
+                typeface = Typeface.create("sans-serif", Typeface.NORMAL)
+                setLineSpacing(0f, 1.08f)
+                setPadding(0, dp(7), 0, 0)
+            })
+            addView(TextView(this@MainActivity).apply {
+                text = "VER ARTISTAS, PALCOS E HORÁRIOS  ›"
+                setTextColor(0xFF7FE7FF.toInt())
+                textSize = 10.5f
+                typeface = Typeface.create("sans-serif-medium", Typeface.BOLD)
+                setPadding(0, dp(10), 0, 0)
+            })
+        })
+        return card
+    }
+
+    private fun showTranceRadar() {
+        val confirmed = tranceRadarActs().filter { it.tranceFocus == TranceFocus.TRANCE }
+        val adjacent = tranceRadarActs().filter { it.tranceFocus == TranceFocus.ADJACENT }
+
+        fun lines(acts: List<Act>): String = acts.joinToString("\n\n") { act ->
+            "${act.name}\n${eventDayLabel(act.eventDay)} · ${formatTime(act)} · ${act.stage}\n${act.tags}"
+        }
+
+        val message = "TRANCE EM FOCO\n${lines(confirmed)}\n\n" +
+            "RADAR ADJACENTE\n${lines(adjacent)}\n\n" +
+            "Adjacente significa que o artista usa melodias, synths ou momentos de trance, mas o set principal pertence a outro gênero. Timmy Trumpet pode incluir psytrance, porém não é um projeto de psytrance puro."
+
+        AlertDialog.Builder(this)
+            .setTitle("🌀 Radar Trance")
+            .setMessage(message)
+            .setNegativeButton("Fechar", null)
+            .setPositiveButton("Ver lineup") { _, _ ->
+                startActivity(Intent(this, LineupActivity::class.java).putExtra("stage", "Apsaras"))
+            }
             .show()
     }
 
@@ -97,7 +166,7 @@ class MainActivity : AppCompatActivity() {
             setCardBackgroundColor(Color.BLACK)
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
-                dp(178)
+                dp(194)
             ).apply { bottomMargin = dp(10) }
         }
 
@@ -140,7 +209,7 @@ class MainActivity : AppCompatActivity() {
             textSize = 12.5f
             typeface = Typeface.create("sans-serif-condensed", Typeface.NORMAL)
             includeFontPadding = false
-            maxLines = 4
+            maxLines = 5
             setPadding(0, dp(4), dp(96), 0)
             layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f)
         }
@@ -212,10 +281,11 @@ class MainActivity : AppCompatActivity() {
 
             val target = if (current != null) actEndMillis(shown) else actStartMillis(shown)
             val countdown = countdown(target - now)
+            val focusLine = if (shown.tranceFocus != TranceFocus.NONE) shown.tranceFocus.label else shown.tags
             holder.text.text = if (current != null) {
-                "AGORA · ${shown.name}\n${formatTime(shown)} · termina em $countdown\n${shown.description}"
+                "AGORA · ${shown.name}\n${formatTime(shown)} · termina em $countdown\n$focusLine\n${shown.description}"
             } else {
-                "PRÓXIMO · ${shown.name}\n${eventDayLabel(shown.eventDay)} · ${formatTime(shown)} · em $countdown\n${shown.description}"
+                "PRÓXIMO · ${shown.name}\n${eventDayLabel(shown.eventDay)} · ${formatTime(shown)} · em $countdown\n$focusLine\n${shown.description}"
             }
             updateActions(holder, shown)
         }

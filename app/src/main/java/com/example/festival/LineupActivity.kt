@@ -109,6 +109,15 @@ class LineupActivity : AppCompatActivity() {
                 setPadding(0, dp(2), 0, 0)
             }
 
+            val tagsTv = TextView(this).apply {
+                text = act.tags
+                setTextColor(0xFFE7E7E7.toInt())
+                textSize = 11.5f
+                typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+                includeFontPadding = false
+                setPadding(0, dp(5), 0, 0)
+            }
+
             val descTv = TextView(this).apply {
                 text = act.description
                 setTextColor(0xFF9e9e9e.toInt())
@@ -119,6 +128,17 @@ class LineupActivity : AppCompatActivity() {
 
             card.addView(titleTv)
             card.addView(timeTv)
+            if (act.tranceFocus != TranceFocus.NONE) {
+                card.addView(TextView(this).apply {
+                    text = act.tranceFocus.label
+                    setTextColor(if (act.tranceFocus == TranceFocus.TRANCE) 0xFF7FE7FF.toInt() else 0xFFBEA7FF.toInt())
+                    textSize = 10.5f
+                    typeface = Typeface.create("sans-serif-medium", Typeface.BOLD)
+                    includeFontPadding = false
+                    setPadding(0, dp(6), 0, 0)
+                })
+            }
+            card.addView(tagsTv)
             card.addView(descTv)
 
             val bottomRow = LinearLayout(this).apply {
