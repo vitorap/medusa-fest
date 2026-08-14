@@ -19,7 +19,7 @@ object FavoriteReminders {
 
     fun createNotificationChannel(ctx: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val ch = NotificationChannel(CHANNEL_ID, "Festival Reminders", NotificationManager.IMPORTANCE_HIGH)
+            val ch = NotificationChannel(CHANNEL_ID, "Alertas Medusa", NotificationManager.IMPORTANCE_HIGH)
             (ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannel(ch)
         }
     }
@@ -33,8 +33,8 @@ object FavoriteReminders {
     }
 
     fun toggle(ctx: Context, act: Act): FavoriteToggleResult {
-        Favorites.toggle(act.name)
-        val isFavorite = Favorites.isFav(act.name)
+        Favorites.toggle(act)
+        val isFavorite = Favorites.isFav(act)
         val scheduled = if (isFavorite) scheduleStartNotification(ctx, act) else {
             cancel(ctx, act)
             false
@@ -44,13 +44,9 @@ object FavoriteReminders {
 
     private fun scheduleStartNotification(ctx: Context, act: Act): Boolean {
         createNotificationChannel(ctx)
-        val cal = java.util.Calendar.getInstance().apply {
-            set(java.util.Calendar.MONTH, java.util.Calendar.MAY)
-            set(java.util.Calendar.YEAR, 2026)
-            set(java.util.Calendar.DAY_OF_MONTH, act.day)
-            set(java.util.Calendar.HOUR_OF_DAY, act.hour)
-            set(java.util.Calendar.MINUTE, act.minute)
-            set(java.util.Calendar.SECOND, 0)
+        val cal = java.util.Calendar.getInstance(java.util.TimeZone.getTimeZone("Europe/Madrid")).apply {
+            clear()
+            set(2026, java.util.Calendar.AUGUST, act.day, act.hour, act.minute, 0)
         }
         if (cal.timeInMillis < System.currentTimeMillis()) return false
 
@@ -60,7 +56,7 @@ object FavoriteReminders {
         }
         val pi = PendingIntent.getBroadcast(
             ctx,
-            act.name.hashCode(),
+            actKey(act).hashCode(),
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -77,7 +73,7 @@ object FavoriteReminders {
         val intent = Intent(ctx, ReminderReceiver::class.java)
         val pi = PendingIntent.getBroadcast(
             ctx,
-            act.name.hashCode(),
+            actKey(act).hashCode(),
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )

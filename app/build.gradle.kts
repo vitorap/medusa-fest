@@ -6,11 +6,11 @@ android {
     namespace = "com.example.festival"
     compileSdk = 34
     defaultConfig {
-        applicationId = "com.example.festival"
+        applicationId = "com.vitorap.medusafest"
         minSdk = 24
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 4
+        versionName = "2.2"
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

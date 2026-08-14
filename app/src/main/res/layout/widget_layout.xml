@@ -4,13 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="#E6000000"
+    android:background="#F0050805"
     android:padding="12dp">
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="MOP BRASIL"
-        android:textColor="#bb86fc"
+        android:text="MEDUSA FEST · CULLERA 2026"
+        android:textColor="#FFD36A"
         android:textSize="10sp"
         android:textStyle="bold"
         android:letterSpacing="0"
@@ -19,18 +19,18 @@
     <TextView android:id="@+id/wRage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="#ff6b6b"
+        android:textColor="#FFD36A"
         android:textSize="11sp"
         android:layout_marginBottom="4dp"/>
     <TextView android:id="@+id/wKodama"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="#69f0ae"
+        android:textColor="#FFC247"
         android:textSize="11sp"
         android:layout_marginBottom="4dp"/>
     <TextView android:id="@+id/wTortuga"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="#ffd740"
+        android:textColor="#FF7EB6"
         android:textSize="11sp"/>
 </LinearLayout>

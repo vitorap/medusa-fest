@@ -10,7 +10,6 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.tabs.TabLayout
-import java.util.Calendar
 
 class LineupActivity : AppCompatActivity() {
     private lateinit var tabLayout: TabLayout
@@ -26,14 +25,21 @@ class LineupActivity : AppCompatActivity() {
         scrollView = findViewById(R.id.scrollView)
         FavoriteReminders.createNotificationChannel(this)
 
-        listOf("Rage", "Kodama", "Tortuga").forEach { tabLayout.addTab(tabLayout.newTab().setText(it)) }
-        showStage("Rage")
+        stages.forEach { tabLayout.addTab(tabLayout.newTab().setText(it)) }
 
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) { showStage(tab.text.toString()) }
             override fun onTabUnselected(tab: TabLayout.Tab) {}
             override fun onTabReselected(tab: TabLayout.Tab) {}
         })
+
+        val initialStage = intent.getStringExtra("stage")?.takeIf { it in stages } ?: stages.first()
+        val initialIndex = stages.indexOf(initialStage)
+        if (tabLayout.selectedTabPosition == initialIndex) {
+            showStage(initialStage)
+        } else {
+            tabLayout.getTabAt(initialIndex)?.select()
+        }
 
         findViewById<Button>(R.id.btnJumpNow).setOnClickListener { jumpToNow() }
         findViewById<Button>(R.id.btnBack).setOnClickListener { finish() }
@@ -45,26 +51,20 @@ class LineupActivity : AppCompatActivity() {
         content.removeAllViews()
         nowView = null
         val acts = lineup.filter { it.stage == stage }.sortedBy { actMinutes(it) }
-        val cal = Calendar.getInstance()
-        val nowMin = cal.get(Calendar.DAY_OF_MONTH) * 24 * 60 + cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE)
-        val currentAct = acts.filter { actMinutes(it) <= nowMin }.maxByOrNull { actMinutes(it) }
+        val now = System.currentTimeMillis()
+        val currentAct = acts.firstOrNull { isActLive(it, now) }
+        val color = stageColor(stage)
+        val dimColor = stageDimColor(stage)
+        val cardBg = stageCardBg(stage)
 
-        val color = when (stage) {
-            "Rage" -> 0xFFff6b6b.toInt(); "Kodama" -> 0xFF69f0ae.toInt(); else -> 0xFFffd740.toInt()
-        }
-        val dimColor = when (stage) {
-            "Rage" -> 0xFF993333.toInt(); "Kodama" -> 0xFF338855.toInt(); else -> 0xFF997722.toInt()
-        }
-        val cardBg = when (stage) {
-            "Rage" -> R.drawable.card_rage; "Kodama" -> R.drawable.card_kodama; else -> R.drawable.card_tortuga
-        }
+        content.addView(createStageGuideCard(stage, color, cardBg))
 
         var lastDay = -1
         var actIndex = 0
         for (act in acts) {
-            if (act.day != lastDay) {
-                lastDay = act.day
-                val dayLabel = when (act.day) { 15 -> "FRIDAY"; 16 -> "SATURDAY"; 17 -> "SUNDAY"; else -> "MONDAY" }
+            if (act.eventDay != lastDay) {
+                lastDay = act.eventDay
+                val dayLabel = eventDayLabel(act.eventDay)
                 val header = TextView(this).apply {
                     text = "\u2014  $dayLabel  \u2014"
                     setTextColor(0xFF9e9e9e.toInt())
@@ -90,7 +90,7 @@ class LineupActivity : AppCompatActivity() {
                 translationY = dp(10).toFloat()
             }
 
-            val fav = if (Favorites.isFav(act.name)) "\u2B50 " else ""
+            val fav = if (Favorites.isFav(act)) "\u2B50 " else ""
 
             val titleTv = TextView(this).apply {
                 text = "$fav${act.name}"
@@ -109,6 +109,15 @@ class LineupActivity : AppCompatActivity() {
                 setPadding(0, dp(2), 0, 0)
             }
 
+            val tagsTv = TextView(this).apply {
+                text = act.tags
+                setTextColor(0xFFE7E7E7.toInt())
+                textSize = 11.5f
+                typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+                includeFontPadding = false
+                setPadding(0, dp(5), 0, 0)
+            }
+
             val descTv = TextView(this).apply {
                 text = act.description
                 setTextColor(0xFF9e9e9e.toInt())
@@ -119,6 +128,17 @@ class LineupActivity : AppCompatActivity() {
 
             card.addView(titleTv)
             card.addView(timeTv)
+            if (act.tranceFocus != TranceFocus.NONE) {
+                card.addView(TextView(this).apply {
+                    text = act.tranceFocus.label
+                    setTextColor(if (act.tranceFocus == TranceFocus.TRANCE) 0xFF7FE7FF.toInt() else 0xFFBEA7FF.toInt())
+                    textSize = 10.5f
+                    typeface = Typeface.create("sans-serif-medium", Typeface.BOLD)
+                    includeFontPadding = false
+                    setPadding(0, dp(6), 0, 0)
+                })
+            }
+            card.addView(tagsTv)
             card.addView(descTv)
 
             val bottomRow = LinearLayout(this).apply {
@@ -128,8 +148,8 @@ class LineupActivity : AppCompatActivity() {
             }
             if (isCurrent) {
                 val nowLabel = TextView(this).apply {
-                    text = "\u25B6 NOW PLAYING"
-                    setTextColor(0xFFbb86fc.toInt())
+                    text = "\u25B6 TOCANDO AGORA"
+                    setTextColor(0xFFFFD36A.toInt())
                     textSize = 10f
                     letterSpacing = 0f
                     typeface = Typeface.create("sans-serif-medium", Typeface.BOLD)
@@ -159,6 +179,51 @@ class LineupActivity : AppCompatActivity() {
         }
     }
 
+    private fun createStageGuideCard(stage: String, color: Int, cardBg: Int): LinearLayout {
+        val guide = stageGuide(stage)
+        return LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setBackgroundResource(cardBg)
+            setPadding(dp(16), dp(14), dp(16), dp(14))
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                topMargin = dp(12)
+                bottomMargin = dp(4)
+            }
+
+            addView(TextView(this@LineupActivity).apply {
+                text = "COMO É ESTE PALCO"
+                setTextColor(color)
+                textSize = 11f
+                typeface = Typeface.create("sans-serif-medium", Typeface.BOLD)
+                letterSpacing = 0.08f
+            })
+            addView(TextView(this@LineupActivity).apply {
+                text = guide.genres
+                setTextColor(0xFFFFFFFF.toInt())
+                textSize = 14f
+                typeface = Typeface.create("sans-serif-medium", Typeface.BOLD)
+                setPadding(0, dp(5), 0, 0)
+            })
+            addView(TextView(this@LineupActivity).apply {
+                text = "${guide.vibe}\n\nSEXTA 14 · ${guide.friday}\n\nDOMINGO 16 · ${guide.sunday}\n\nVÁ SE… ${guide.chooseIf}\n\n${guide.intensity}"
+                setTextColor(0xFFCBCBCB.toInt())
+                textSize = 12.5f
+                typeface = Typeface.create("sans-serif", Typeface.NORMAL)
+                setLineSpacing(0f, 1.08f)
+                setPadding(0, dp(7), 0, 0)
+            })
+            addView(TextView(this@LineupActivity).apply {
+                text = "Guia prático baseado no lineup e nos takeovers oficiais; o estilo de cada set pode variar."
+                setTextColor(0xFF7F8E89.toInt())
+                textSize = 10f
+                setPadding(0, dp(9), 0, 0)
+            })
+        }
+    }
+
     private fun dp(v: Int): Int = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, v.toFloat(), resources.displayMetrics).toInt()
 
     private fun jumpToNow() {
@@ -168,10 +233,10 @@ class LineupActivity : AppCompatActivity() {
     private fun toggleFavWithReminder(act: Act, stage: String) {
         val result = FavoriteReminders.toggle(this, act)
         if (result.isFavorite) {
-            val msg = if (result.reminderScheduled) "\u2B50 ${act.name} \u2014 start alert set" else "\u2B50 ${act.name} saved"
+            val msg = if (result.reminderScheduled) "\u2B50 ${act.name} \u2014 alerta agendado" else "\u2B50 ${act.name} salvo"
             Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
         } else {
-            Toast.makeText(this, "Removed ${act.name}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "${act.name} removido", Toast.LENGTH_SHORT).show()
         }
         showStage(stage)
     }
